@@ -1,5 +1,2 @@
 require "neo4j_ancestry/version"
-
-module Neo4jAncestry
-  # Your code goes here...
-end
+require 'neo4j_ancestry/railtie' if defined? Rails
