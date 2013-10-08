@@ -21,35 +21,45 @@ module Neo4jAncestry
       child_class_names = options[:child_class_names] || []
 
       parent_class_names.each do |parent_class_name|
-        has_many( "links_as_child_for_#{parent_class_name.underscore.pluralize}".to_sym, 
-                  -> { where parent_type: parent_class_name },
-                  #conditions: { parent_type: parent_class_name } )
-                  as: :child, class_name: link_class_name )
-        has_many( "parent_#{parent_class_name.underscore.pluralize}".to_sym, 
-                  through: "links_as_child_for_#{parent_class_name.underscore.pluralize}".to_sym, 
-                  as: :structureable, 
-                  foreign_key: :parent_id, source: 'parent', 
-                  source_type: parent_class_name )
+        has_many_for_rails_3_and_4(
+          "links_as_child_for_#{parent_class_name.underscore.pluralize}".to_sym,
+          { parent_type: parent_class_name },
+          { as: :child, class_name: link_class_name } )
+        has_many( 
+          "parent_#{parent_class_name.underscore.pluralize}".to_sym, 
+          through: "links_as_child_for_#{parent_class_name.underscore.pluralize}".to_sym, 
+          as: :structureable, 
+          foreign_key: :parent_id, source: 'parent', 
+          source_type: parent_class_name )
         define_method "ancestor_#{parent_class_name.underscore.pluralize}".to_sym do
           send("parent_#{parent_class_name.underscore.pluralize}".to_sym)
         end
       end  
 
       child_class_names.each do |child_class_name|
-        has_many( "links_as_parent_for_#{child_class_name.underscore.pluralize}".to_sym, 
-                  -> { where child_type: child_class_name },
-                  #conditions: { child_type: child_class_name } )
-                  as: :parent, class_name: link_class_name )
-        has_many( "child_#{child_class_name.underscore.pluralize}".to_sym, 
-                  through: "links_as_parent_for_#{child_class_name.underscore.pluralize}".to_sym, 
-                  as: :structureable, 
-                  foreign_key: :child_id, source: 'child', 
-                  source_type: child_class_name )
+        has_many_for_rails_3_and_4( 
+          "links_as_parent_for_#{child_class_name.underscore.pluralize}".to_sym, 
+          { child_type: child_class_name },
+          { as: :parent, class_name: link_class_name } )
+        has_many( 
+          "child_#{child_class_name.underscore.pluralize}".to_sym, 
+          through: "links_as_parent_for_#{child_class_name.underscore.pluralize}".to_sym, 
+          as: :structureable, 
+          foreign_key: :child_id, source: 'child', 
+          source_type: child_class_name )
         define_method "descendant_#{child_class_name.underscore.pluralize}".to_sym do
           send("child_#{child_class_name.underscore.pluralize}".to_sym)
         end
       end
 
+    end
+    
+    def has_many_for_rails_3_and_4(association_name, condition_hash, options)
+      if Rails.version.start_with? "4"
+        has_many(association_name, -> { where condition_hash }, options)
+      elsif Rails.version.start_with? "3"
+        has_many(association_name, options.merge({conditions: conditions_hash}))
+      end
     end
     
   end
