@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Neo4jAncestry::VERSION
   spec.authors       = ["Sebastian Fiedlschuster"]
   spec.email         = ["sebastian@fiedlschuster.de"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = "This ruby on rails gem makes it easy to store polymorphic structure information --- parents, children, ancestors, descendants, ... --- in a neo4j graph database parallel to using ActiveRecord."
+  spec.summary       = spec.description
+  spec.homepage      = "https://github.com/fiedl/neo4j_ancestry"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -19,5 +19,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_dependency "rails", ">= 3.2"
   spec.add_development_dependency "rake"
+  
+  spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-rspec"
 end

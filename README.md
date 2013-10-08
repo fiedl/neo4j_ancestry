@@ -1,6 +1,13 @@
 # Neo4jAncestry
 
-TODO: Write a gem description
+This ruby on rails gem makes it easy to store polymorphic structure information --- `parents`, `children`, `ancestors`, `descendants`, ... --- in a [neo4j graph database](http://www.neo4j.org) parallel to using ActiveRecord.
+
+All relevant information is stored in your default ActiveRecord database, including the parent-child relationships. But, in addition, the structure information is also stored in a neo4j graph database in order to use its power of fast graph traversing queries.
+
+## Usage
+
+TODO: Write usage instructions here
+
 
 ## Installation
 
@@ -16,9 +23,12 @@ Or install it yourself as:
 
     $ gem install neo4j_ancestry
 
-## Usage
 
-TODO: Write usage instructions here
+## Underlying Technology
+
+* The [neo4j graph database](http://www.neo4j.org)
+* The [neography gem](https://github.com/maxdemarzi/neography) is used as datbase interface.
+* The [neoid gem](https://github.com/elado/neoid) is used for database abstraction in parallel to ActiveRecord.
 
 ## Contributing
 
