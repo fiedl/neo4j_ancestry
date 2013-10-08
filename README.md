@@ -1,4 +1,6 @@
-# Neo4jAncestry
+# Neo4jAncestry 
+
+[![Build Status](https://travis-ci.org/fiedl/neo4j_ancestry.png?branch=master)](https://travis-ci.org/fiedl/neo4j_ancestry)
 
 This ruby on rails gem makes it easy to store polymorphic structure information --- `parents`, `children`, `ancestors`, `descendants`, ... --- in a [neo4j graph database](http://www.neo4j.org) parallel to using ActiveRecord.
 
