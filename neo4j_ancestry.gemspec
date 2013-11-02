@@ -28,5 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'activerecord'
   
   spec.add_dependency "rails", ">= 3.2"
+  spec.add_dependency "neography"
   spec.add_dependency "neoid"
 end
