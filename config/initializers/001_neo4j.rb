@@ -11,7 +11,7 @@
 if Rails.env.development?
   neo4j_url = "http://localhost:7474"
 elsif Rails.env.test?
-  neo4j_url = "http://localhost:7475"
+  neo4j_url = "http://localhost:7574"
 elsif Rails.env.production?
   raise 'TODO: read the neo4j server connection from config file.'
 end

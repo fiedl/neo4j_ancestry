@@ -10,9 +10,11 @@ namespace :neo4j do
     `cp -r db/neo4j/development db/neo4j/test`
     
     # the port number for the development database is 7474 (default),
-    # the port number for the test database is 7475.
+    # the port number for the test database is 7574.
+    # For https, the ports are 7473 (development) and 7573 (test). 
     #
-    `sed -i -e 's/7474/7475/g' db/neo4j/test/conf/neo4j-server.properties`
+    `sed -i -e 's/7474/7574/g' db/neo4j/test/conf/neo4j-server.properties`
+    `sed -i -e 's/7473/7573/g' db/neo4j/test/conf/neo4j-server.properties`    
     
     # the wrapper names are 'neo4j-development' and 'neo4j-test' respectively.
     #
