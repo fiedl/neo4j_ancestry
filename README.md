@@ -10,6 +10,10 @@ All relevant information is stored in your default ActiveRecord database, includ
 
 TODO: Write usage instructions here
 
+* One can use either Gremlin; examples ...
+* or one can use neoid's methods;
+* or neography's extensive posibilities: https://github.com/maxdemarzi/neography#phase-2
+
 
 ## Installation
 

@@ -113,5 +113,49 @@ describe Neo4jAncestry::ActiveRecordAdditions do
       it { should == @siblings }
     end
   end
+  
+  describe "(route traversing methods)" do
+    # 
+    # For visualization, consider the following graph.
+    #    
+    #     A
+    #     |-- B ----- C -.
+    #     D              |
+    #     |-- E -------- F
+    #     G
+    #
+    # In this graph, there are two routes between A and F:
+    #   A -- B -- C -- F   and
+    #   A -- D -- E -- F
+    #
+    before do
+      @A = Group.create(name: "A")
+      @B = @A.child_groups.create(name: "B")
+      @C = @B.child_groups.create(name: "C")
+      @F = @C.child_groups.create(name: "F")
+      @D = @A.child_groups.create(name: "D")
+      @E = @D.child_groups.create(name: "E")
+      @E.child_groups << @F
+      @G = @D.child_groups.create(name: "G")
+    end
+    describe "#find_routes_to" do
+      subject { @F.find_routes_to(@A) }
+      it "should return an Array of ActiveRecord::Relation-type objects, which represent the route" do
+        subject.should be_kind_of Array
+        subject.first.should be_kind_of ActiveRecord::Relation
+      end
+      it "should return the correct routes" do
+        subject.first.to_a.should == [@A, @B, @C, @F]
+        subject.last.to_a.should == [@A, @D, @E, @F]
+      end
+      specify "the routes should allow further where clauses" do
+        subject.first.where(name: ["A", "B"]).should == [@A, @B]
+      end
+    end
+    
+    # `object.find_routes_to(other_object)`
+    # `object.find_routes_to(other_object, via: third_object)`
+    # `object.find_routes_to(other_object, via: [third_object, another_object])`
+  end
 
 end

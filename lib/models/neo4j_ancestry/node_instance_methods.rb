@@ -1,5 +1,8 @@
 module Neo4jAncestry
   module NodeInstanceMethods
+    
+    # Neo4j Association Methods
+    # ========================================================================================
 
     # The neoid gem provides a neo_node method, which returns an object
     # representing the node in the neo4j database that corresponds to this
@@ -19,6 +22,10 @@ module Neo4jAncestry
     def neo_id
       neo_node.try(:neo_id)
     end
+    
+    
+    # Basic Traversing Methods
+    # ========================================================================================
     
     # Methods to query the neo4j database for parents, children,
     # ancestors, descendants and siblings.
@@ -53,6 +60,29 @@ module Neo4jAncestry
       ").uniq
     end
     
+    
+    # Route Traversing Methods
+    # ========================================================================================
+    
+    def find_routes_to(other_object)
+      
+      # find_related_nodes_via_cypher(",
+      #   other_object = node(#{other_object.neo_id})
+      #   match path = (self)-[:is_parent_of*1..100]-(other_object)
+      #   return path
+      # ")
+  
+      self.neo_node.all_paths_to(other_object.neo_node)
+        .both(:is_parent_of).depth(100).nodes.collect do |path|
+          neo_nodes_to_objects(path)
+        end
+      
+    end
+    
+    
+    # Query Methods 
+    # ========================================================================================
+    
     # This method returns all ActiveRecord objects found by a cypher
     # neo4j query defined through the given query_string.
     # 
@@ -84,10 +114,37 @@ module Neo4jAncestry
     #
     def cypher_results_to_objects(cypher_results)
       cypher_results["data"].collect do |result|
-        result.first["data"]["ar_type"].constantize.find(result.first["data"]["ar_id"])
+        #result.first["data"]["ar_type"].constantize.find(result.first["data"]["ar_id"])
+        neo_node_to_object(result.first["data"])
       end
     end
     private :cypher_results_to_objects
+    
+    # Neography often returns an encapsulated array of neo_nodes, e.g.
+    #    [[neo_node1, neo_node2 ...]]
+    #
+    # This method returns an array of the associated ActiveRecord objects.
+    #
+    def neo_nodes_to_objects(neo_nodes)
+      neo_nodes_array = neo_nodes.first if neo_nodes.first.kind_of? Array
+      neo_nodes_array ||= neo_nodes
+      neo_nodes_array.collect do |neo_node|
+        neo_node_to_object neo_node
+      end
+    end
+    private :neo_nodes_to_objects
+    
+    # This method finds the ActiveRecord object that corresponds to 
+    # a NeoNode. 
+    #
+    # TODO: I have not found a method on neo_node that simply returns the 
+    # ActiveRecord object. If you know this method, please change this
+    # method accordingly.
+    #
+    def neo_node_to_object(neo_node)
+      neo_node["ar_type"].constantize.find neo_node["ar_id"]
+    end
+    private :neo_node_to_object
     
   end
 end
