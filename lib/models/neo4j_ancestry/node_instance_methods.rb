@@ -36,13 +36,13 @@ module Neo4jAncestry
     end
     def ancestors
       find_related_nodes_via_cypher("
-        match (ancestors)-[:is_parent_of*0..100]->(self)
+        match (ancestors)-[:is_parent_of*1..100]->(self)
         return ancestors
       ").uniq
     end
     def descendants
       find_related_nodes_via_cypher("
-        match (self)-[:is_parent_of*0..100]->(descendants)
+        match (self)-[:is_parent_of*1..100]->(descendants)
         return descendants
       ").uniq
     end

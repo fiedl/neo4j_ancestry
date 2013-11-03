@@ -43,12 +43,12 @@ describe Neo4jAncestry::ActiveRecordAdditions do
       @parent2 = @group.parent_groups.create(name: "Parent Group 2")
       @parents = [@parent1, @parent2]
       @ancestor1 = @parent1.parent_groups.create(name: "Ancestor Group 1")
-      @ancestors = [@parent1, @parent2, @ancestor1]
+      @ancestors = [@parent1, @ancestor1, @parent2]
       @child1 = @group.child_groups.create(name: "Child Group")
       @child2 = @group.child_users.create(name: "Child User")
       @children = [@child1, @child2]
       @descendant1 = @child1.child_users.create(name: "Descendant User 1")
-      @descendants = [@child1, @child2, @descendant1]
+      @descendants = [@child1, @descendant1, @child2]
       @sibling1 = @parent1.child_groups.create(name: "Sibling Group")
       @sibling2 = @parent2.child_users.create(name: "Child User 1")
       @siblings = [@sibling1, @sibling2]
