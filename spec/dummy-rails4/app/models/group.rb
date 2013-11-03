@@ -5,6 +5,6 @@ class Group < ActiveRecord::Base
     self.child_users << user
   end
   def unassign_user(user)
-    # TODO
+    self.child_users.destroy(user)
   end
 end

@@ -36,6 +36,45 @@ describe Neo4jAncestry::ActiveRecordAdditions do
     it { should respond_to :links_as_parent_for_users }
   end
   
+  describe "(association methods)" do
+    before do
+      @user = User.create(name: "John Doe")
+      @group = Group.create(name: "Group")
+      @parent_group = @group.parent_groups.create(name: "Parent Group")
+    end
+    describe "#child_objects << [assignment]" do
+      subject { @group.child_users << @user }
+      it "should add the object to the list of associated objects" do
+        @group.child_users.should_not include @user
+        subject
+        @group.child_users.should include @user
+      end
+      it "should also create the indirect association via the graph" do
+        @user.ancestors.should_not include @parent_group
+        subject
+        @user.ancestors.should include @parent_group
+      end
+    end
+    describe "#child_objects.destroy(...) [unassignment]" do
+      before { @group.child_users << @user }
+      subject { @group.child_users.destroy(@user) }
+      it "should destroy the association" do
+        @group.child_users.should include @user
+        subject
+        @group.child_users.should_not include @user
+      end
+      it "should not destroy the object itself" do
+        subject
+        User.all.should include @user
+      end
+      it "should destroy the indirect associations in the graph" do
+        @user.ancestors.should include @parent_group
+        subject
+        @user.ancestors.should_not include @parent_group
+      end
+    end
+  end
+  
   describe "(simple traversal methods)" do
     before do
       @group = Group.create(name: "Group")
