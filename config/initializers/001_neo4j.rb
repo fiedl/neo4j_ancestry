@@ -8,7 +8,14 @@
 #    https://github.com/elado/neoid#usage
 #
 
-neo4j_url = "http://localhost:7474"
+if Rails.env.development?
+  neo4j_url = "http://localhost:7474"
+elsif Rails.env.test?
+  neo4j_url = "http://localhost:7475"
+elsif Rails.env.production?
+  raise 'TODO: read the neo4j server connection from config file.'
+end
+
 uri = URI.parse(neo4j_url)
 
 $neo = Neography::Rest.new(uri.to_s)

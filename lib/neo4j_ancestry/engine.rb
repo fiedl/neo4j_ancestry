@@ -1,7 +1,3 @@
-require 'rubygems'
-#require 'neography'
-#require 'neoid'
-
 module Neo4jAncestry
   class Engine < ::Rails::Engine
     
