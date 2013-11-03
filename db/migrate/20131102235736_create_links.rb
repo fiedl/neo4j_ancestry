@@ -4,7 +4,7 @@ class CreateLinks < ActiveRecord::Migration
       t.integer :parent_id
       t.string :parent_type
       t.integer :child_id
-      t.integer :child_type
+      t.string :child_type
     end
   end
 end

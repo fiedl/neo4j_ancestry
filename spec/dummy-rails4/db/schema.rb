@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20131103162013) do
     t.integer "parent_id"
     t.string  "parent_type"
     t.integer "child_id"
-    t.integer "child_type"
+    t.string  "child_type"
   end
 
   create_table "users", force: true do |t|
