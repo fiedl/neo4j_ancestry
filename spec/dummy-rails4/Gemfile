@@ -44,4 +44,4 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-#gem 'neo4j_ancestry', path: '../../'
+gem 'neo4j_ancestry', path: '../../'

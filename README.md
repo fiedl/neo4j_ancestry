@@ -13,18 +13,35 @@ TODO: Write usage instructions here
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add the gem to your application's `Gemfile`:
 
+    # Gemfile
+    # ...
     gem 'neo4j_ancestry'
 
 And then execute:
 
-    $ bundle
+    # bash
+    bundle install
 
-Or install it yourself as:
+Install the neo4j database `db` directory:
 
-    $ gem install neo4j_ancestry
+    # bash
+    bundle exec rake neo4j:install
+    bundle exec rake neo4j:setup_stages
+    
+Activate the neo4j database deamon. Otherwise, connecting to the neo4j database 
+will fail in the further setup process.
 
+    # bash
+    bundle exec foreman start neo4j
+    
+Next, migrate the database in order to add the neccessary tables.
+
+    # bash
+    bundle exec rake neo4j_ancestry:install:migrations
+    bundle exec rake db:migrate
+    
 
 ## Underlying Technology
 
