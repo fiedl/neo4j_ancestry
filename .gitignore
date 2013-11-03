@@ -15,3 +15,9 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+
+# neo4j database of the dummy app
+spec/dummy-rails4/db/neo4j
+spec/dummy-rails3/db/neo4j
+spec/dummy-rails4/neo4j
+spec/dummy-rails3/neo4j

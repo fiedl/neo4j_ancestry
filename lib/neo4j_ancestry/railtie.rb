@@ -2,7 +2,10 @@ module Neo4jAncestry
   class Railtie < Rails::Railtie
 
     rake_tasks do
-      load File.expand_path("../../../lib/tasks/setup_stages.rake", __FILE__)
+      tasks = %w(setup start stop)
+      for task in tasks
+        load File.expand_path("../../../lib/tasks/#{task}.rake", __FILE__)
+      end
     end
     
     initializer 'setup neo4j database connection' do
