@@ -7,6 +7,5 @@ gemfile:
   - rails4.Gemfile
 before_script:
   - bundle exec rake neo4j_ancestry:db:test:prepare
-  - bundle exec rake db:migrate db:test:prepare
 after_script:
   - bundle exec rake neo4j:stop

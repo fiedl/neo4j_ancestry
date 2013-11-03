@@ -17,6 +17,7 @@ namespace :neo4j_ancestry do
         end
         
         `cd #{dummy_path} && bundle exec rake neo4j:start`
+        `cd #{dummy_path} && bundle exec rake db:create db:migrate db:test:prepare`
         
       end
       

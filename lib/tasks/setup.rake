@@ -1,7 +1,7 @@
 namespace :neo4j do
   
   desc "Setup Neo4j Database Stages (development, test)"
-  task :setup_stages do
+  task :setup do
     
     # neo4j folders for the development stage and for the test stage
     #
