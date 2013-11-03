@@ -1,6 +1,6 @@
 require 'rubygems'
-require 'neography'
-require 'neoid'
+#require 'neography'
+#require 'neoid'
 
 module Neo4jAncestry
   class Engine < ::Rails::Engine

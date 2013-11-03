@@ -27,7 +27,7 @@ And then execute:
 Install the neo4j database `db` directory:
 
     # bash
-    bundle exec rake neo4j:install
+    bundle exec rake neo4j:install neo4j:start
     bundle exec rake neo4j:setup_stages
     
 Activate the neo4j database deamon. Otherwise, connecting to the neo4j database 
