@@ -99,9 +99,9 @@ module Neo4jAncestry
     # Since this gem supports both rails versions, this method
     # is a wrapper.
     #
-    def has_many_for_rails_3_and_4(association_name, condition_hash, options)
+    def has_many_for_rails_3_and_4(association_name, conditions_hash, options)
       if Rails.version.start_with? "4"
-        has_many(association_name, -> { where condition_hash }, options)
+        has_many(association_name, -> { where conditions_hash }, options)
       elsif Rails.version.start_with? "3"
         has_many(association_name, options.merge({conditions: conditions_hash}))
       end

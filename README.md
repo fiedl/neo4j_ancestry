@@ -50,6 +50,22 @@ Next, migrate the database in order to add the neccessary tables.
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+### Running the Gem's Specs Locally
+
+Symlink the `Gemfile` according to the Rails version you would like to use:
+
+    # bash
+    rm Gemfile Gemfile.lock
+    ln -s rails3.2.Gemfile Gemfile   # for Rails 3
+    ln -s rails4.Gemfile Gemfile     # for Rails 4  (default)
+
+Next, install the dependencies and run the specs.
+
+    # bash
+    bundle install
+    bundle exec rake neo4j_ancestry:db:test:prepare
+    bundle exec rake
+
 ## Author, License
 
 (c) 2013, Sebastian Fiedlschuster
