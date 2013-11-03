@@ -15,7 +15,7 @@ describe Neo4jAncestry::ActiveRecordAdditions do
       #   has_neo4j_ancestry parent_class_names: %w(Group), child_class_names: %w(Group User)
       #
       # as can be seen in
-      #   spec/support/schema.rb
+      #   spec/dummy-rails4/app/models/group.rb
       #
       @group ||= Group.new
     end
