@@ -6,7 +6,7 @@ gemfile:
   - rails3.2.Gemfile
   - rails4.Gemfile
 before_script:
-  - bundle exec rake neo4j:install neo4j:setup neo4j:start
+  - bundle exec rake neo4j_ancestry:db:test:prepare
   - bundle exec rake db:migrate db:test:prepare
 after_script:
   - bundle exec rake neo4j:stop
