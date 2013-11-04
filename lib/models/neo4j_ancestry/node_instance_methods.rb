@@ -146,5 +146,30 @@ module Neo4jAncestry
     end
     private :neo_node_to_object
     
+    # # This method returns an ActiveRecord::Relation that refers to the
+    # # ActiveRecord object associated with the given neo_node.
+    # #
+    # # This might be useful if one would like to apply further where
+    # # clauses, et cetera.
+    # #
+    # def neo_node_to_arel(neo_node)
+    #   neo_node["ar_type"].where id: neo_node["ar_id"]
+    # end
+    # private :neo_node_to_arel
+    # 
+    # def neo_nodes_to_arel(neo_nodes)
+    #   # TODO: How can multiple ActiveRecord::Relations contained in an Array
+    #   # be combined to a single ActiveRecord::Relation, joined by the OR
+    #   # operator?
+    #   # 
+    #   # There are a couple of possibilities:
+    #   #   * http://stackoverflow.com/questions/9540801/combine-two-activerecordrelation-objects
+    #   #   * http://stackoverflow.com/questions/7976358/activerecord-arel-or-condition
+    #   #   * http://railscasts.com/episodes/355-hacking-with-arel
+    #   # 
+    #   # But, for the moment, I'm not sure if this is worth the efford.
+    # end
+    # private :neo_nodes_to_arel
+    
   end
 end

@@ -140,17 +140,22 @@ describe Neo4jAncestry::ActiveRecordAdditions do
     end
     describe "#find_routes_to" do
       subject { @F.find_routes_to(@A) }
-      it "should return an Array of ActiveRecord::Relation-type objects, which represent the route" do
+      it "should return an Array of Arrays of objects (Groups in this case)" do
         subject.should be_kind_of Array
-        subject.first.should be_kind_of ActiveRecord::Relation
+        subject.first.should be_kind_of Array
+        subject.first.first.should be_kind_of Group
       end
       it "should return the correct routes" do
-        subject.first.to_a.should == [@A, @B, @C, @F]
-        subject.last.to_a.should == [@A, @D, @E, @F]
+        subject.first.to_a.should == [@A, @B, @C, @F].reverse
+        subject.last.to_a.should == [@A, @D, @E, @F].reverse
       end
-      specify "the routes should allow further where clauses" do
-        subject.first.where(name: ["A", "B"]).should == [@A, @B]
-      end
+      # specify "the routes should allow further where clauses" do
+      #   subject.first.where(name: ["A", "B"]).should == [@A, @B]
+      #
+      #   # TODO: This has been postponed for the moment. Implement when
+      #   # find_routes_to returns an Array of ActiveRecord::Relations.
+      #   # See: lib/neo4j_ancestry/models/node_instance_methods#neo_nodes_to_arel.
+      # end
     end
     
     # `object.find_routes_to(other_object)`
