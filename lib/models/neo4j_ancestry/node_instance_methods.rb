@@ -29,35 +29,32 @@ module Neo4jAncestry
     
     # Methods to query the neo4j database for parents, children,
     # ancestors, descendants and siblings.
+    #
     def parents
-      find_related_nodes_via_cypher("
-        match (parents)-[:is_parent_of]->(self)
-        return parents
-      ")
+      # match (self)<-[:is_parent_of]-(parents)
+      self.neo_node.incoming(:is_parent_of).to_active_record
     end
     def children
-      find_related_nodes_via_cypher("
-        match (self)-[:is_parent_of]->(children)
-        return children
-      ")
+      # match (self)-[:is_parent_of]->(children)
+      self.neo_node.outgoing(:is_parent_of).to_active_record
     end
     def ancestors(options = {})
-      where_clause_for_type = "where ancestors.ar_type = '#{options[:type]}'" if options[:type]
-      where_clause_for_type ||= ""
-      find_related_nodes_via_cypher("
-        match (ancestors)-[:is_parent_of*1..100]->(self)
-        #{where_clause_for_type}
-        return ancestors
-      ").uniq
+      # match (self)<-[:is_parent_of*1..100]->(ancestors)
+      self.neo_node.incoming(:is_parent_of).depth(100).to_active_record
     end
     def descendants(options = {})
-      where_clause_for_type = "where descendants.ar_type = '#{options[:type]}'" if options[:type]
-      where_clause_for_type ||= ""
-      find_related_nodes_via_cypher("
-        match (self)-[:is_parent_of*1..100]->(descendants)
-        #{where_clause_for_type}
-        return descendants
-      ").uniq
+      # match (self)-[:is_parent_of*1..100]->(descendants)
+      objs = self.neo_node.outgoing(:is_parent_of).depth(100).to_active_record
+      objs.select! { |obj| obj.kind_of? options[:type].constantize } if options[:type].present?
+      return objs
+      
+      # where_clause_for_type = "where descendants.ar_type = '#{options[:type]}'" if options[:type]
+      # where_clause_for_type ||= ""
+      # find_related_nodes_via_cypher("
+      #   match (self)-[:is_parent_of*1..100]->(descendants)
+      #   #{where_clause_for_type}
+      #   return descendants
+      # ").uniq
     end
     def siblings
       find_related_nodes_via_cypher("
