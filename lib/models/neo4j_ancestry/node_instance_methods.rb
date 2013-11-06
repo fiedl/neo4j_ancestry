@@ -41,15 +41,21 @@ module Neo4jAncestry
         return children
       ")
     end
-    def ancestors
+    def ancestors(options = {})
+      where_clause_for_type = "where ancestors.ar_type = '#{options[:type]}'" if options[:type]
+      where_clause_for_type ||= ""
       find_related_nodes_via_cypher("
         match (ancestors)-[:is_parent_of*1..100]->(self)
+        #{where_clause_for_type}
         return ancestors
       ").uniq
     end
-    def descendants
+    def descendants(options = {})
+      where_clause_for_type = "where descendants.ar_type = '#{options[:type]}'" if options[:type]
+      where_clause_for_type ||= ""
       find_related_nodes_via_cypher("
         match (self)-[:is_parent_of*1..100]->(descendants)
+        #{where_clause_for_type}
         return descendants
       ").uniq
     end

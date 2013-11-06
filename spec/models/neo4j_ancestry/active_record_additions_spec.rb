@@ -112,6 +112,19 @@ describe Neo4jAncestry::ActiveRecordAdditions do
       subject { @group.siblings }
       it { should == @siblings }
     end
+    
+    describe "#ancestor_groups" do
+      subject { @group.ancestor_groups }
+      it { should == @ancestors.select { |ancestor| ancestor.kind_of? Group } }
+    end
+    describe "#descendant_groups" do
+      subject { @group.descendant_groups }
+      it { should == @descendants.select { |descendant| descendant.kind_of? Group } }
+    end
+    describe "#descendant_users" do
+      subject { @group.descendant_users }
+      it { should == @descendants.select { |descendant| descendant.kind_of? User } }
+    end
   end
   
   describe "(route traversing methods)" do

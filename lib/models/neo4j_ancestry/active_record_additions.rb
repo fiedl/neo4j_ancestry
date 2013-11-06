@@ -61,6 +61,21 @@ module Neo4jAncestry
           source_type: child_class_name )
       end
       
+      # ancestors and descendants for certain types of objects, e.g.
+      #   group.ancestor_groups
+      #   group.descendant_users
+      #
+      parent_class_names.each do |parent_class_name|
+        define_method("ancestor_#{parent_class_name.underscore.pluralize}") do |options = {}|
+          ancestors(options.merge({ type: parent_class_name }))
+        end
+      end
+      child_class_names.each do |child_class_name|
+        define_method("descendant_#{child_class_name.underscore.pluralize}") do |options = {}|
+          descendants(options.merge({ type: child_class_name }))
+        end
+      end
+      
       # Use the neoid gem to have this object represented as node
       # in the neo4j graph database.
       # 
