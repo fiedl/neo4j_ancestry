@@ -159,21 +159,26 @@ describe Neo4jAncestry::ActiveRecordAdditions do
         subject.first.first.should be_kind_of Group
       end
       it "should return the correct routes" do
-        subject.first.to_a.should == [@A, @B, @C, @F].reverse
-        subject.last.to_a.should == [@A, @D, @E, @F].reverse
+        subject.should include [@A, @B, @C, @F].reverse
+        subject.should include [@A, @D, @E, @F].reverse
       end
-      # specify "the routes should allow further where clauses" do
-      #   subject.first.where(name: ["A", "B"]).should == [@A, @B]
-      #
-      #   # TODO: This has been postponed for the moment. Implement when
-      #   # find_routes_to returns an Array of ActiveRecord::Relations.
-      #   # See: lib/neo4j_ancestry/models/node_instance_methods#neo_nodes_to_arel.
-      # end
+      describe "with via option" do
+        describe "with one argument" do
+          subject { @F.find_routes_to(@A, via: @C) }
+          it "should return an Array of the correct path(s)" do
+            subject.should be_kind_of Array
+            subject.first.should == [@A, @B, @C, @F].reverse
+          end
+        end
+        describe "with two arguments" do
+          subject { @F.find_routes_to(@A, via: [@C, @B]) }
+          it "should return an Array of the correct path(s)" do
+            subject.should be_kind_of Array
+            subject.first.should == [@A, @B, @C, @F].reverse
+          end
+        end
+      end
     end
-    
-    # `object.find_routes_to(other_object)`
-    # `object.find_routes_to(other_object, via: third_object)`
-    # `object.find_routes_to(other_object, via: [third_object, another_object])`
-  end
 
+  end
 end
