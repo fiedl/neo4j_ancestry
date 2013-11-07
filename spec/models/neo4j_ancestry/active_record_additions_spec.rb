@@ -177,6 +177,40 @@ describe Neo4jAncestry::ActiveRecordAdditions do
             subject.first.should == [@A, @B, @C, @F].reverse
           end
         end
+        describe "providing the direction option" do
+          describe ":incoming" do
+            # A -> B -> C -> F 
+            describe "for a matching route existing" do
+              subject { @F.find_routes_to(@A, direction: :incoming) }
+              its(:first) { should == [@F, @C, @B, @A] }
+            end
+            describe "for no matching route existing" do
+              subject { @A.find_routes_to(@F, direction: :incoming) }
+              it { should == [] }
+            end
+          end
+          describe ":outgoing" do
+            # A -> B -> C -> F
+            describe "for a matching route existing" do
+              subject { @A.find_routes_to(@F, direction: :outgoing) }
+              its(:first) { should == [@A, @B, @C, @F] }
+            end
+            describe "for no matching route existing" do
+              subject { @F.find_routes_to(@A, direction: :outgoing) }
+              it { should == [] }
+            end            
+          end
+          describe ":both" do
+            # A -> B -> C -> F
+            it "should work in both directions" do
+              @A.find_routes_to(@F, direction: :both).should include [@A, @B, @C, @F]
+              @F.find_routes_to(@A, direction: :both).should include [@F, @C, @B, @A]
+            end
+            it "should be the default behaviour" do
+              @A.find_routes_to(@F, direction: :both).should == @A.find_routes_to(@F)
+            end
+          end
+        end
       end
     end
 

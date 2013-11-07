@@ -88,26 +88,24 @@ module Neo4jAncestry
       via_object_declarations_str += ", " if via_object_declarations_str.present?
       nodes_to_connect = ["self"] + via_object_names + ["destination_object"]
       
+      # Note: Providing the :direction option if the direction is known,
+      # may reduce the query time considerably.
+      #
+      if options[:direction] == :outgoing
+        relation_str = "-[:is_parent_of*1..100]->"
+      elsif options[:direction] == :incoming
+        relation_str = "<-[:is_parent_of*1..100]-"
+      else
+        relation_str = "-[:is_parent_of*1..100]-"
+      end
+      
       find_related_nodes_via_cypher(",
         #{via_object_declarations_str}
         destination_object = node(#{destination_object.neo_id})
-        match paths = (#{nodes_to_connect.join(')-[:is_parent_of*1..100]-(')})
+        match paths = (#{nodes_to_connect.join(')' + relation_str + '(')})
         return paths
         order by length(paths)
-      ")
-
-      
-      # find_related_nodes_via_cypher(",
-      #   other_object = node(#{other_object.neo_id})
-      #   match path = (self)-[:is_parent_of*1..100]-(other_object)
-      #   return path
-      # ")
-  
-      # self.neo_node.all_paths_to(other_object.neo_node)
-      #   .both(:is_parent_of).depth(100).nodes.collect do |path|
-      #     path.collect { |neo_node| neo_node.to_active_record }
-      #   end
-      
+      ") || []
     end
     
     
@@ -132,8 +130,14 @@ module Neo4jAncestry
         start self=node(#{neo_id})
         #{query_string}
       "
+      # t1 = Time.now
       result = CypherResult.new(Neoid.db.execute_query(query_string))
+      # t2 = Time.now
       result.to_active_record || []
+      # t3 = Time.now
+      
+      # p "===", (t2-t1)*1000.0, (t3-t2)*1000.0
+      # result.to_active_record || []
     end
     
     # This is a helper for Cypher where clauses.
