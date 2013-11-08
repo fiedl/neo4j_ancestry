@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131103162013) do
+ActiveRecord::Schema.define(version: 20131107194528) do
 
   create_table "groups", force: true do |t|
     t.string   "name"
@@ -20,10 +20,14 @@ ActiveRecord::Schema.define(version: 20131103162013) do
   end
 
   create_table "neo4j_ancestry_links", force: true do |t|
-    t.integer "parent_id"
-    t.string  "parent_type"
-    t.integer "child_id"
-    t.string  "child_type"
+    t.integer  "parent_id"
+    t.string   "parent_type"
+    t.integer  "child_id"
+    t.string   "child_type"
+    t.datetime "valid_from"
+    t.datetime "valid_to"
+    t.datetime "created_at"
+    t.datetime "updates_at"
   end
 
   create_table "users", force: true do |t|

@@ -213,6 +213,52 @@ describe Neo4jAncestry::ActiveRecordAdditions do
         end
       end
     end
-
+  end
+  
+  describe "(validity range methods)" do
+    before do
+      @A = Group.create(name: "A")
+      @B = @A.child_groups.create(name: "B")
+      @link = @B.links_as_child.first
+    end
+    describe "#valid_from" do
+      subject { @link.valid_from }
+      it "should be the datetime of creation by default" do
+        subject.to_i.should == @link.created_at.to_i  # to_i: accurate to seconds
+      end
+    end
+    describe "#valid_to" do
+      subject { @link.valid_to }
+      it "should be nil by default, i.e. infinitely valid" do
+        subject.should == nil
+      end
+    end
+    describe "(traversing example:) #ancestors" do
+      subject { @B.ancestors }
+      describe "by default", :focus do
+        it "should find only ancestors that are connected by relations that are valid now" do
+          subject.should include @A
+          @link.update_attribute(:valid_to, 20.minutes.ago.to_datetime)
+          @B.reload.ancestors.should_not include @A
+        end
+      end
+    end
+    describe "#expire_at" do
+      before { @expire_time = 2.hours.from_now }
+      subject { @link.expire_at @expire_time }
+      it "should set the valid_to attribute" do
+        @link.valid_to.should == nil
+        subject
+        @link.valid_to.should == @expire_time
+      end
+    end
+    describe "#expire" do
+      subject { @link.expire }
+      it "should set the valid_to attribute to the current datetime" do
+        @link.valid_to.should == nil
+        subject
+        @link.valid_to.to_i.should == DateTime.now.to_i
+      end
+    end
   end
 end

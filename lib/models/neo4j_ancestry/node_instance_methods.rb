@@ -44,8 +44,9 @@ module Neo4jAncestry
     end
     def ancestors(options = {})
       find_related_nodes_via_cypher("
-        match (self)<-[:is_parent_of*1..100]-(ancestors)
-        #{where('ancestors.ar_type' => options[:type])}
+        match (self)<-[rels:is_parent_of*1..100]-(ancestors)
+        #{where('ancestors.ar_type' => options[:type])} 
+        AND #{validity_range_conditions(options, 'rels')}
         return distinct ancestors
       ")
     end
@@ -130,14 +131,17 @@ module Neo4jAncestry
         start self=node(#{neo_id})
         #{query_string}
       "
-      # t1 = Time.now
-      result = CypherResult.new(Neoid.db.execute_query(query_string))
-      # t2 = Time.now
-      result.to_active_record || []
-      # t3 = Time.now
       
-      # p "===", (t2-t1)*1000.0, (t3-t2)*1000.0
-      # result.to_active_record || []
+      p "QUERY", query_string if query_string.include? "valid_from"
+      
+      #t1 = Time.now
+      result = CypherResult.new(Neoid.db.execute_query(query_string))
+      #t2 = Time.now
+      result.to_active_record || []
+      #t3 = Time.now
+      
+      #p "===", (t2-t1)*1000.0, (t3-t2)*1000.0
+      #result.to_active_record || []
     end
     
     # This is a helper for Cypher where clauses.
@@ -154,11 +158,31 @@ module Neo4jAncestry
       conditions_hash.each do |key, value|
         conditions_array << "#{key} = '#{value}'" if value.present?
       end
-      conditions_str = ""
       if conditions_array.count > 0
         conditions_str = "WHERE " + conditions_array.join(" AND ")
+      else
+        conditions_str = "WHERE 1=1"
       end
       return conditions_str
     end
+    
+    # This helper transforms the given options_hash that includes validity
+    # options like 'at', 'before', 'after' into a condition string that can
+    # be used in a Cypher WHERE statement.
+    #
+    #      valid_from           valid_to
+    #         |--------------------->|
+    #        
+    #
+    def validity_range_conditions(options_hash, relationships_identifyer = "rels")
+      options_hash[:at] ||= Time.zone.now
+      at_time = options_hash[:at].to_time.to_s(:db)  #.to_datetime.to_s(:db)
+      valid_from_condition = "(not has(rel.valid_from)) OR rel.valid_from is null OR rel.valid_from <= '#{at_time}'"
+      valid_to_condition = "(not has(rel.valid_to)) OR rel.valid_to is null OR rel.valid_to >= '#{at_time}'"
+      "ALL ( rel in #{relationships_identifyer} 
+             where (#{valid_from_condition}) AND (#{valid_to_condition}) 
+           )"
+    end
+      
   end
 end
