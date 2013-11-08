@@ -132,7 +132,7 @@ module Neo4jAncestry
         #{query_string}
       "
       
-      p "QUERY", query_string if query_string.include? "valid_from"
+      # p "QUERY", query_string if query_string.include? "valid_from"
       
       #t1 = Time.now
       result = CypherResult.new(Neoid.db.execute_query(query_string))
@@ -176,7 +176,7 @@ module Neo4jAncestry
     #
     def validity_range_conditions(options_hash, relationships_identifyer = "rels")
       options_hash[:at] ||= Time.zone.now
-      at_time = options_hash[:at].to_time.to_s(:db)  #.to_datetime.to_s(:db)
+      at_time = options_hash[:at].to_time.to_s(:db)
       valid_from_condition = "(not has(rel.valid_from)) OR rel.valid_from is null OR rel.valid_from <= '#{at_time}'"
       valid_to_condition = "(not has(rel.valid_to)) OR rel.valid_to is null OR rel.valid_to >= '#{at_time}'"
       "ALL ( rel in #{relationships_identifyer} 

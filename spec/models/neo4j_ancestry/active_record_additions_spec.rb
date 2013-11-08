@@ -235,7 +235,7 @@ describe Neo4jAncestry::ActiveRecordAdditions do
     end
     describe "(traversing example:) #ancestors" do
       subject { @B.ancestors }
-      describe "by default", :focus do
+      describe "by default" do
         it "should find only ancestors that are connected by relations that are valid now" do
           subject.should include @A
           @link.update_attribute(:valid_to, 20.minutes.ago.to_datetime)
