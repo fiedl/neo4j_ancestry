@@ -233,7 +233,7 @@ describe Neo4jAncestry::ActiveRecordAdditions do
         subject.should == nil
       end
     end
-    describe "(traversing example:) #ancestors" do
+    describe "(traversing example:) #ancestors", :focus do
       subject { @B.ancestors }
       describe "by default" do
         it "should find only ancestors that are connected by relations that are valid now" do

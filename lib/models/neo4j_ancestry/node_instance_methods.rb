@@ -44,9 +44,9 @@ module Neo4jAncestry
     end
     def ancestors(options = {})
       find_related_nodes_via_cypher("
-        match (self)<-[rels:is_parent_of*1..100]-(ancestors)
+        match (self)<-[membership:is_parent_of]-(group)<-[:is_parent_of*0..100]-(ancestors)
         #{where('ancestors.ar_type' => options[:type])} 
-        AND #{validity_range_conditions(options, 'rels')}
+        AND #{validity_range_conditions(options, 'membership')}
         return distinct ancestors
       ")
     end
@@ -134,14 +134,14 @@ module Neo4jAncestry
       
       # p "QUERY", query_string if query_string.include? "valid_from"
       
-      #t1 = Time.now
+      t1 = Time.now
       result = CypherResult.new(Neoid.db.execute_query(query_string))
-      #t2 = Time.now
+      t2 = Time.now
       result.to_active_record || []
-      #t3 = Time.now
+      t3 = Time.now
       
-      #p "===", (t2-t1)*1000.0, (t3-t2)*1000.0
-      #result.to_active_record || []
+      p "===", (t2-t1)*1000.0, (t3-t2)*1000.0
+      result.to_active_record || []
     end
     
     # This is a helper for Cypher where clauses.
@@ -174,14 +174,13 @@ module Neo4jAncestry
     #         |--------------------->|
     #        
     #
-    def validity_range_conditions(options_hash, relationships_identifyer = "rels")
+    def validity_range_conditions(options_hash, relationship_identifier = "rel")
       options_hash[:at] ||= Time.zone.now
       at_time = options_hash[:at].to_time.to_s(:db)
-      valid_from_condition = "(not has(rel.valid_from)) OR rel.valid_from is null OR rel.valid_from <= '#{at_time}'"
-      valid_to_condition = "(not has(rel.valid_to)) OR rel.valid_to is null OR rel.valid_to >= '#{at_time}'"
-      "ALL ( rel in #{relationships_identifyer} 
-             where (#{valid_from_condition}) AND (#{valid_to_condition}) 
-           )"
+      rel = relationship_identifier
+      valid_from_condition = "(not has(#{rel}.valid_from)) OR #{rel}.valid_from is null OR #{rel}.valid_from <= '#{at_time}'"
+      valid_to_condition = "(not has(#{rel}.valid_to)) OR #{rel}.valid_to is null OR #{rel}.valid_to >= '#{at_time}'"
+      "(#{valid_from_condition}) AND (#{valid_to_condition})" 
     end
       
   end
