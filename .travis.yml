@@ -1,6 +1,11 @@
 language: ruby
 rvm:
   - 2.1.2
+jdk:
+  - oraclejdk7
+  - openjdk7
+services:
+  - neo4j
 gemfile:
   - rails3.2.Gemfile
   - rails4.Gemfile

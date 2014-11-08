@@ -13,7 +13,7 @@ namespace :neo4j_ancestry do
         )
         
         unless File.exists?("#{dummy_path}/db/neo4j")
-          `cd #{dummy_path} && bundle exec rake neo4j:install neo4j:setup`
+          `cd #{dummy_path} && bundle exec rake neo4j:install neo4j:get_spatial neo4j:setup`
         end
         
         `cd #{dummy_path} && bundle exec rake neo4j:start`

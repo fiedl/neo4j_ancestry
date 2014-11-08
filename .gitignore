@@ -15,6 +15,7 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+neo4j-spatial.zip
 
 # neo4j database of the dummy app
 spec/dummy-rails4/db/neo4j

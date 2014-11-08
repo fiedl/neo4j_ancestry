@@ -17,6 +17,14 @@ TODO: Write usage instructions here
 
 ## Installation
 
+First, make sure, **Java 7 JDK** is installed.
+
+* Mac OS
+  * Install the JDK, not the JRE: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+  * Set your `JAVA_HOME` environment variable: http://stackoverflow.com/a/6588410/2066546
+* Ubuntu/Debian GNU Linux
+  * `aptitude install openjdk-7-jre-headless`
+
 Add the gem to your application's `Gemfile`:
 
     # Gemfile
@@ -31,7 +39,7 @@ And then execute:
   Install the neo4j database `db` directory and start the deamon:
 
     # bash
-    bundle exec rake neo4j:install neo4j:setup neo4j:start
+    bundle exec rake neo4j:install neo4j:get_spatial neo4j:setup neo4j:start
     
 Next, migrate the database in order to add the neccessary tables.
 
