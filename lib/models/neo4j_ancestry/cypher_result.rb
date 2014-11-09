@@ -47,8 +47,8 @@ module Neo4jAncestry
     #        "ar_type"=>"Group"}}
     #
     def object_data_to_active_record
-      if self["data"] && self["data"].kind_of?(Hash) && self["data"]["ar_type"] && self["data"]["ar_id"]
-        self["data"]["ar_type"].constantize.find(self["data"]["ar_id"]) 
+      if self["data"] && self["data"].kind_of?(Hash) && self["data"]["active_record_class"] && self["data"]["active_record_id"]
+        self["data"]["active_record_class"].constantize.find(self["data"]["active_record_id"]) 
       end
     end
     
@@ -87,7 +87,7 @@ module Neo4jAncestry
     #           "name"=>"Sibling Group"}}],
     #
     def array_data_to_active_record
-      if self["data"] && self["data"].first && self["data"].first.first && self["data"].first.first["data"] && self["data"].first.first["data"]["ar_type"]
+      if self["data"] && self["data"].first && self["data"].first.first && self["data"].first.first["data"] && self["data"].first.first["data"]["active_record_class"]
         self["data"].collect do |node_data| 
           CypherResult.new(node_data.first).to_active_record
         end
@@ -135,7 +135,7 @@ module Neo4jAncestry
         
         paths_of_nodes = paths_of_node_references.collect do |path|
           path.collect do |node_reference|
-            CypherResult.new($neo.get_node(node_reference)).to_active_record
+            CypherResult.new(Neo4jDatabase.get_node(node_reference)).to_active_record
           end
         end
       end

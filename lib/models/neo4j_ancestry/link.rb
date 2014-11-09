@@ -18,11 +18,32 @@ module Neo4jAncestry
     belongs_to :parent, polymorphic: true
     belongs_to :child, polymorphic: true
     
-    include Neoid::Relationship
-  
-    neoidable do |c|
-      c.relationship start_node: :parent, end_node: :child, type: :is_parent_of
+    after_save :neo_sync
+    before_destroy :neo_delete
+    def before_remove
+      # This method is called from `active_record_associations_patches`.
+      neo_delete
+    end
+    
+    def neo_sync
+      Neo4jDatabase.execute("
+        match (parent {#{parent.neo_id}}), (child {#{child.neo_id}})
+        merge (parent)-[relation:#{neo_relation_type}]->(child)
+        return relation
+      ")
+    end
+    def neo_delete
+      Neo4jDatabase.execute("
+        match 
+          (parent {#{parent.neo_id}}), 
+          (child {#{child.neo_id}}),
+          (parent)-[relation:#{neo_relation_type}]->(child)
+        delete relation
+      ")
+    end
+    def neo_relation_type
+      :is_parent_of
     end
     
   end
-end 
+end

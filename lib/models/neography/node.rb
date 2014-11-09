@@ -5,7 +5,7 @@ module Neography
     # Neography::Node. 
     #
     def to_active_record_object
-      self["ar_type"].constantize.find self["ar_id"]
+      self["active_record_class"].constantize.find self["active_record_id"]
     end
     def to_active_record
       self.to_active_record_object

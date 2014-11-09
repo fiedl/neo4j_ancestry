@@ -14,10 +14,10 @@ RSpec.configure do |config|
   
   # Reset Neo4j Database when neccessary.
   config.before :all do
-    Neoid.clean_db(:yes_i_am_sure)
+    Neo4jDatabase.clear(:yes_i_am_sure)
   end
   config.before :each do
-    Neoid.reset_cached_variables
+    #Neoid.reset_cached_variables
   end
   
   # Filtering, see Railscast #413

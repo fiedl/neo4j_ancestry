@@ -76,38 +76,29 @@ module Neo4jAncestry
         end
       end
       
-      # Use the neoid gem to have this object represented as node
-      # in the neo4j graph database.
-      # 
-      include Neoid::Node
-      
       # Copy the name attribute to the neo4j nodes.
-      # Other attributes can be copied as well by using the 'attributes_to_copy_to_neo4j'.
+      # Other attributes can be copied as well by using the 'attributes_to_copy_to_neo4j', later.
       # 
-      attributes_to_copy_to_neo4j do |c|
-        c.field :name
-      end
+      attributes_to_copy_to_neo4j :name
       
       # Include the instance methods for interaction with the neo4j graph.
       #
       include Neo4jAncestry::NodeInstanceMethods
       
+      # Callbacks to synchronize from ActiveRecord to Neo4j.
+      after_save :create_or_update_neo_node
+      before_destroy :destroy_neo_node_and_relations
+      
     end
     
     # Attributes to copy over to the neo4j database.
-    # This is just a wrapper for the 'neoidable' method of the neoid gem.
-    #   https://github.com/elado/neoid
     # 
     # Example:
-    #   attributes_to_copy_to_neo4j do |c|
-    #     c.field :name
-    #     c.field :name_length do 
-    #       self.name.length
-    #     end
-    #   end
+    #   attributes_to_copy_to_neo4j :name, :email
     # 
-    def attributes_to_copy_to_neo4j(&block)
-      neoidable(&block)
+    def attributes_to_copy_to_neo4j(*keys)
+      @attribute_keys_to_copy_to_neo4j = [] unless defined?(@attribute_keys_to_copy_to_neo4j)
+      @attribute_keys_to_copy_to_neo4j += keys
     end
     
     # The has_many method changes from Rails 3 to Rails 4.
