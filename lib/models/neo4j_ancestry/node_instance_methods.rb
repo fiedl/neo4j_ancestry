@@ -220,7 +220,7 @@ module Neo4jAncestry
     def destroy_neo_node_and_relations
       Neo4jDatabase.execute("
         #{neo_self_match_clause} 
-        optional match (self)-[relation]
+        optional match (self)-[relation]-()
         delete self, relation
       ")
     end
