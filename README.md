@@ -45,10 +45,12 @@ First, make sure, **Java 7 JDK** is installed. You can check using `java -versio
 * Mac OS
   * Install the JDK, not the JRE: [Download](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
   * Set your `JAVA_HOME` environment variable in the `.zshenv` or `.bashrc` like this:
+    
     ```bash
     # .zshenv
     export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
     ```
+    
 * Ubuntu/Debian GNU Linux
   * `aptitude install openjdk-7-jre-headless`
 
