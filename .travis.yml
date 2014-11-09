@@ -4,8 +4,6 @@ rvm:
 jdk:
   - oraclejdk7
   - openjdk7
-services:
-  - neo4j
 gemfile:
   - rails3.2.Gemfile
   - rails4.Gemfile
