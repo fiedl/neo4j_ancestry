@@ -115,15 +115,15 @@ describe Neo4jAncestry::ActiveRecordAdditions do
     
     describe "#ancestor_groups" do
       subject { @group.ancestor_groups }
-      it { should == @ancestors.select { |ancestor| ancestor.kind_of? Group } }
+      it { should == @ancestors.select { |ancestor| ancestor.kind_of? Group }.sort }
     end
     describe "#descendant_groups" do
       subject { @group.descendant_groups }
-      it { should == @descendants.select { |descendant| descendant.kind_of? Group } }
+      it { should == @descendants.select { |descendant| descendant.kind_of? Group }.sort }
     end
     describe "#descendant_users" do
       subject { @group.descendant_users }
-      it { should == @descendants.select { |descendant| descendant.kind_of? User } }
+      it { should == @descendants.select { |descendant| descendant.kind_of? User }.sort }
     end
   end
   

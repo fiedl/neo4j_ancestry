@@ -8,11 +8,15 @@ module Neo4jAncestry
     # The Cypher result is formatted as REST API output,
     # see http://docs.neo4j.org/chunked/stable/rest-api-cypher.html.
     #
-    def to_active_record
+    # Options:
+    #   - type: Assume that the result objects are of the given type, which makes the
+    #       conversion to ActiveRecord faster. Example: "Group".
+    #
+    def to_active_record(options = {})
       ( 
-        object_data_to_active_record ||  # single ActiveRecord object
-        array_data_to_active_record ||   # Array of ActiveRecord objects
-        path_data_to_active_record       # Array of Arrays of ActiveRecord objects
+        object_data_to_active_record         ||  # single ActiveRecord object
+        array_data_to_active_record(options) ||  # Array of ActiveRecord objects
+        path_data_to_active_record               # Array of Arrays of ActiveRecord objects
       )
     end
 
@@ -86,14 +90,33 @@ module Neo4jAncestry
     #           "ar_type"=>"Group",
     #           "name"=>"Sibling Group"}}],
     #
-    def array_data_to_active_record
-      if self["data"] && self["data"].first && self["data"].first.first && self["data"].first.first["data"] && self["data"].first.first["data"]["active_record_class"]
-        self["data"].collect do |node_data| 
-          CypherResult.new(node_data.first).to_active_record
+    # Options:
+    #   - type: Assume that the result objects are of the given type, which makes the
+    #       conversion to ActiveRecord faster. Example: "Group".
+    #
+    # This method is able to convert object results as well as id results.
+    #   Example:
+    #     - match (n) ... return n
+    #     - match (n) ... return n.active_record_id
+    #
+    def array_data_to_active_record(options = {})
+      if options[:type]
+        if self["data"].first.first.kind_of? Integer
+          # self["data"] == [[1], [2], [3], ...]
+          ids = self["data"].collect { |node_data| node_data.first }
+          options[:type].constantize.find(ids)
+        elsif self["data"] && self["data"].first && self["data"].first.first && self["data"].first.first["data"] && self["data"].first.first["data"]["active_record_class"]
+          ids = self["data"].collect { |node_data| node_data.first["data"]["active_record_id"] }
+          options[:type].constantize.find(ids)
+        end
+      else        
+        if self["data"] && self["data"].first && self["data"].first.first && self["data"].first.first["data"] && self["data"].first.first["data"]["active_record_class"]
+          self["data"].collect do |node_data| 
+            CypherResult.new(node_data.first).to_active_record
+          end
         end
       end
     end
-    
     
     # This method returns an Array of paths, where each path
     # is represented by an Array of nodes, each node being

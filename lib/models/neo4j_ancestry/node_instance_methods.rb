@@ -46,15 +46,15 @@ module Neo4jAncestry
       find_related_nodes_via_cypher("
         match (self)<-[:is_parent_of*1..100]-(ancestors)
         #{where('ancestors.active_record_class' => options[:type])}
-        return distinct ancestors
-      ")
+        return distinct ancestors#{".active_record_id" if options[:type]}
+      ", type: options[:type])
     end
     def descendants(options = {})
       find_related_nodes_via_cypher("
         match (self)-[:is_parent_of*1..100]->(descendants)
         #{where('descendants.active_record_class' => options[:type])}
-        return distinct descendants
-      ")
+        return distinct descendants#{".active_record_id" if options[:type]}
+      ", type: options[:type])
     end
     def siblings
       find_related_nodes_via_cypher("
@@ -125,7 +125,11 @@ module Neo4jAncestry
     #     return children
     #   ")  # =>  [child_group1, child_group2, ...]
     #
-    def find_related_nodes_via_cypher(query_string)
+    # Options:
+    #   - type: Assume that the result objects are of the given type, which makes the
+    #       conversion to ActiveRecord faster. Example: "Group".
+    # 
+    def find_related_nodes_via_cypher(query_string, options = {})
       query_string = "
         #{neo_self_match_clause}
         #{query_string}
@@ -133,7 +137,7 @@ module Neo4jAncestry
       # t1 = Time.now
       result = CypherResult.new(Neo4jDatabase.execute(query_string))
       # t2 = Time.now
-      result.to_active_record || []
+      result.to_active_record(options) || []
       # t3 = Time.now
 
       
