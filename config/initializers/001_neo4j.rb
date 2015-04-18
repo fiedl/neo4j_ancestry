@@ -8,10 +8,11 @@
 #    https://github.com/elado/neoid#usage
 #
 
+neo4j_url = ""
 if Rails.env.development?
-  neo4j_url = "http://localhost:7474"
+  neo4j_url = ENV['NEO4J_URL'] || "http://localhost:7474"
 elsif Rails.env.test?
-  neo4j_url = "http://localhost:7574"
+  neo4j_url = ENV['NEO4J_URL'] || "http://localhost:7574"
 elsif Rails.env.production?
   raise 'TODO: read the neo4j server connection from config file.'
 end

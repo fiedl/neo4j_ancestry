@@ -1,31 +1,23 @@
 class Neo4jDatabase
   
-  def self.connect(neo4j_url = nil)
+  def self.connect(neo4j_url)
     @@singleton = self.new
-    @@singleton.connect
+    @@singleton.connect(neo4j_url)
   end
   def self.method_missing(m, *args, &block)
     @@singleton.send m, *args, &block
   end
   
-  def connect(neo4j_url = nil)
-    neo4j_url ||= if Rails.env.development?
-      "http://localhost:7474"
-    elsif Rails.env.test?
-      "http://localhost:7574"
-    elsif Rails.env.production?
-      raise 'no production database defined when using Neo4jDatabase.connect(neo4j_url).'
-    else
-      raise 'environment not handled.'
-    end
-    
+  # neo4j_url: http://user:password@localhost:7474
+  #
+  def connect(neo4j_url)
     uri = URI.parse(neo4j_url)
     connect_rest_interface uri
-
+    
     Neography.configure do |c|
       c.server = uri.host
       c.port = uri.port
-
+      
       if uri.user && uri.password
         c.authentication = 'basic'
         c.username = uri.user
